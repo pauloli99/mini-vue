@@ -13,6 +13,6 @@
     "lib": ["es6", "DOM"],
     "outDir": "./lib"
   },
-  "include": ["src/index.ts"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "./lib"]
 }
