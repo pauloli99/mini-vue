@@ -44,8 +44,19 @@ function mountElement(vnode: any, container: any) {
 
   // 处理props
   for (const key in props) {
+    console.log(key);
+
     const val = props[key];
-    el.setAttribute(key, val);
+
+    const isOn = (key: string) => /^on[A-Z]/.test(key);
+
+    if (isOn(key)) {
+      const event = key.slice(2).toLowerCase();
+
+      el.addEventListener(event, val);
+    } else {
+      el.setAttribute(key, val);
+    }
   }
 
   container.append(el);
