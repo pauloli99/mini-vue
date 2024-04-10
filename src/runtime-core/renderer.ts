@@ -44,8 +44,6 @@ function mountElement(vnode: any, container: any) {
 
   // 处理props
   for (const key in props) {
-    console.log(key);
-
     const val = props[key];
 
     const isOn = (key: string) => /^on[A-Z]/.test(key);
