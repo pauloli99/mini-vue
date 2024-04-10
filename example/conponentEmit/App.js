@@ -13,16 +13,19 @@ export const App = {
       {
         id: "root",
         class: ["red", "hard"],
+        onClick: () => {
+          console.log("click");
+        },
+        onMouseDown: () => {
+          console.log("onMouseDown");
+        },
       },
+      // "hi," + this.msg
+      // "hi, mini-vue "
       [
         h("span", { class: "red" }, "hi, " + this.msg),
         h(Foo, {
-          onAdd(a, b) {
-            console.log("onAdd emit from child", a, b);
-          },
-          onAddFoo(a, b) {
-            console.log("onAddFoo emit from child", a, b);
-          },
+          count: 1,
         }),
       ]
     );
