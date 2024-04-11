@@ -1,8 +1,9 @@
-import { shallowReadonly } from "../reactivity/reative";
+import { shallowReadonly } from "../reactivity/reactive";
 import { emit } from "./componentEmit";
+import { initProps } from "./componentProps";
 import { PublicInstanceProxyHandlers } from "./componentPublicInstance";
 import { initSlots } from "./componentSlots";
-import { initProps } from "./conponentProps";
+
 export function createComponentInstance(vnode) {
   const component = {
     vnode,
@@ -18,34 +19,33 @@ export function createComponentInstance(vnode) {
   return component;
 }
 
-export const setupComponent = (instance) => {
-  // todo
+export function setupComponent(instance) {
   initProps(instance, instance.vnode.props);
   initSlots(instance, instance.vnode.children);
-
   setupStatefulComponent(instance);
-};
+}
 
 function setupStatefulComponent(instance: any) {
   const Component = instance.type;
 
-  // ctx
   instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
 
   const { setup } = Component;
 
   if (setup) {
+    setCurrentInstance(instance);
     const setupResult = setup(shallowReadonly(instance.props), {
       emit: instance.emit,
     });
+    setCurrentInstance(null);
 
     handleSetupResult(instance, setupResult);
   }
 }
-function handleSetupResult(instance: any, setupResult: any) {
-  // function and object
-  // todo function
 
+function handleSetupResult(instance, setupResult: any) {
+  // function Object
+  // TODO function
   if (typeof setupResult === "object") {
     instance.setupState = setupResult;
   }
@@ -56,7 +56,15 @@ function handleSetupResult(instance: any, setupResult: any) {
 function finishComponentSetup(instance: any) {
   const Component = instance.type;
 
-  //   if (Component.render) {
   instance.render = Component.render;
-  //   }
+}
+
+let currentInstance = null;
+
+export function getCurrentInstance() {
+  return currentInstance;
+}
+
+export function setCurrentInstance(instance) {
+  currentInstance = instance;
 }

@@ -1,6 +1,6 @@
 import { extend, isObject } from "../shared";
 import { track, trigger } from "./effect";
-import { ReactiveFlags, reactive, readonly } from "./reative";
+import { reactive, ReactiveFlags, readonly, shallowReadonly } from "./reactive";
 
 const get = createGetter();
 const set = createSetter();
@@ -17,10 +17,10 @@ function createGetter(isReadonly = false, shallow = false) {
 
     const res = Reflect.get(target, key);
 
-    // 如果是shallow，直接返回
-    if (shallow) return res;
+    if (shallow) {
+      return res;
+    }
 
-    // 如果是对象，递归代理
     if (isObject(res)) {
       return isReadonly ? readonly(res) : reactive(res);
     }
@@ -28,7 +28,6 @@ function createGetter(isReadonly = false, shallow = false) {
     if (!isReadonly) {
       track(target, key);
     }
-
     return res;
   };
 }
@@ -38,7 +37,6 @@ function createSetter() {
     const res = Reflect.set(target, key, value);
 
     trigger(target, key);
-
     return res;
   };
 }
@@ -50,8 +48,11 @@ export const mutableHandlers = {
 
 export const readonlyHandlers = {
   get: readonlyGet,
-  set(target, key, value) {
-    console.warn(`${key} set 失败，因为target是readonly`, target);
+  set(target, key) {
+    console.warn(
+      `key :"${String(key)}" set 失败，因为 target 是 readonly 类型`,
+      target
+    );
 
     return true;
   },

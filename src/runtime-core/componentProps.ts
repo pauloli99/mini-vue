@@ -1,5 +1,3 @@
 export function initProps(instance, rawProps) {
-  instance.props = rawProps || {};
-
-  //   attrs
+  instance.props = rawProps || {}
 }

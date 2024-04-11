@@ -1,13 +1,8 @@
-import { camelize, toHandleKey } from "../shared";
+import { camelize, toHandlerKey } from "../shared/index";
 
-export const emit = (instance, eventName, ...args) => {
-  console.log(`output->eventName`, eventName);
-
-  //   instance.props => event
+export function emit(instance, event, ...args) {
   const { props } = instance;
-
-  const handleName = toHandleKey(camelize(eventName));
-
-  const handler = props[handleName];
+  const handlerName = toHandlerKey(camelize(event));
+  const handler = props[handlerName];
   handler && handler(...args);
-};
+}

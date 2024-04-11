@@ -1,5 +1,5 @@
 import { effect, stop } from "../effect";
-import { reactive } from "../reative";
+import { reactive } from "../reactive";
 
 describe("effect", () => {
   it("happy path", () => {
@@ -8,7 +8,6 @@ describe("effect", () => {
     });
 
     let nextAge;
-
     effect(() => {
       nextAge = user.age + 1;
     });
@@ -20,76 +19,61 @@ describe("effect", () => {
     expect(nextAge).toBe(12);
   });
 
-  it("should return runner when call ef fect", () => {
-    // 1. effect(fn) => function(runner) => fn => return
-    let foo = 10;
-
+  it("should return runner when call effect", () => {
+    // 当调用 runner 的时候可以重新执行 effect.run
+    // runner 的返回值就是用户给的 fn 的返回值
+    let foo = 0;
     const runner = effect(() => {
       foo++;
-
-      return "foo";
+      return foo;
     });
 
-    expect(foo).toBe(11);
-    const r = runner();
-    expect(foo).toBe(12);
-    expect(r).toBe("foo");
+    expect(foo).toBe(1);
+    runner();
+    expect(foo).toBe(2);
+    expect(runner()).toBe(3);
   });
 
   it("scheduler", () => {
-    // 1.通过effect的第二个参数给定一个scheduler的fn
-    // 2.effect第一次执行的时候还会执行fn
-    // 3.当响应式对象update时不会执行fn而是scheduler
-    // 4.如果说执行runner的时候，会执行fn
-
     let dummy;
     let run: any;
-
     const scheduler = jest.fn(() => {
       run = runner;
     });
-
     const obj = reactive({ foo: 1 });
-
     const runner = effect(
       () => {
         dummy = obj.foo;
       },
-      {
-        scheduler,
-      }
+      { scheduler }
     );
-
     expect(scheduler).not.toHaveBeenCalled();
     expect(dummy).toBe(1);
-
+    // should be called on first trigger
     obj.foo++;
     expect(scheduler).toHaveBeenCalledTimes(1);
-
+    // // should not run yet
     expect(dummy).toBe(1);
+    // // manually run
     run();
+    // // should have run
     expect(dummy).toBe(2);
   });
 
   it("stop", () => {
     let dummy;
-    let obj = reactive({
-      prop: 1,
-    });
-
+    const obj = reactive({ prop: 1 });
     const runner = effect(() => {
       dummy = obj.prop;
     });
-
     obj.prop = 2;
-
     expect(dummy).toBe(2);
     stop(runner);
     // obj.prop = 3;
     obj.prop++;
-
     expect(dummy).toBe(2);
 
+    // stopped effect should still be manually callable
     runner();
     expect(dummy).toBe(3);
   });
@@ -98,10 +82,8 @@ describe("effect", () => {
     const obj = reactive({
       foo: 1,
     });
-
     const onStop = jest.fn();
-
-    let dummy: any;
+    let dummy;
     const runner = effect(
       () => {
         dummy = obj.foo;
@@ -112,6 +94,6 @@ describe("effect", () => {
     );
 
     stop(runner);
-    expect(onStop).toHaveBeenCalledTimes(1);
+    expect(onStop).toBeCalledTimes(1);
   });
 });

@@ -1,4 +1,4 @@
-import { isReadonly, shallowReadonly } from "../reative";
+import { isReadonly, shallowReadonly } from "../reactive";
 
 describe("shallowReadonly", () => {
   test("should not make non-reactive properties reactive", () => {
@@ -7,15 +7,13 @@ describe("shallowReadonly", () => {
     expect(isReadonly(props.n)).toBe(false);
   });
 
-  it("warn when call set", () => {
+  it("should call console.warn when set", () => {
     console.warn = jest.fn();
-
     const user = shallowReadonly({
-      age: 11,
+      age: 10,
     });
 
-    user.age = 12;
-
+    user.age = 11;
     expect(console.warn).toHaveBeenCalled();
   });
 });

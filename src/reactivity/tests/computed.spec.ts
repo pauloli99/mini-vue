@@ -1,5 +1,5 @@
 import { computed } from "../computed";
-import { reactive } from "../reative";
+import { reactive } from "../reactive";
 
 describe("computed", () => {
   it("happy path", () => {
@@ -14,13 +14,13 @@ describe("computed", () => {
     expect(age.value).toBe(1);
   });
 
-  it("should computed lazily", () => {
-    const value = reactive({ foo: 1 });
-
+  it("should compute lazily", () => {
+    const value = reactive({
+      foo: 1,
+    });
     const getter = jest.fn(() => {
       return value.foo;
     });
-
     const cValue = computed(getter);
 
     // lazy
@@ -30,14 +30,14 @@ describe("computed", () => {
     expect(getter).toHaveBeenCalledTimes(1);
 
     // should not compute again
-    cValue.value;
+    cValue.value; // get
     expect(getter).toHaveBeenCalledTimes(1);
 
-    // should not compute until value is accessed
+    // should not compute until needed
     value.foo = 2;
     expect(getter).toHaveBeenCalledTimes(1);
 
-    // now should compute
+    // now it should compute
     expect(cValue.value).toBe(2);
     expect(getter).toHaveBeenCalledTimes(2);
 
