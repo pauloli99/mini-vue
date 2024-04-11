@@ -1,6 +1,7 @@
 import { createComponentInstance, setupComponent } from "./component";
 import { isObject } from "../shared";
 import { ShapeFlags } from "../shared/ShapeFlags";
+import { Fragment } from "./createVNode";
 
 export function render(vnode, container) {
   // patch => vnode => dom
@@ -9,15 +10,27 @@ export function render(vnode, container) {
 }
 
 function patch(vnode: any, container: any) {
-  const { shapeFlag } = vnode;
+  const { shapeFlag, type } = vnode;
 
-  // TODO 判断vnode是组件还是元素
-  if (shapeFlag & ShapeFlags.ELEMENT) {
-    // 如果是元素
-    processElement(vnode, container);
-  } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-    //   如果是元素
-    processComponent(vnode, container);
+  switch (type) {
+    case Fragment:
+      processFragment(vnode, container);
+
+      break;
+
+    case Text:
+      processText(vnode, container);
+      break;
+
+    default:
+      if (shapeFlag & ShapeFlags.ELEMENT) {
+        // 如果是元素
+        processElement(vnode, container);
+      } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        //   如果是元素
+        processComponent(vnode, container);
+      }
+      break;
   }
 }
 
@@ -27,6 +40,17 @@ function processElement(vnode: any, container: any) {
 
 function processComponent(vnode: any, container: any) {
   mountComponent(vnode, container);
+}
+
+function processFragment(vnode: any, container: any) {
+  mountChildren(vnode, container);
+}
+
+function processText(vnode: any, container: any) {
+  const { children } = vnode;
+  const textNode = (vnode.el = document.createTextNode(children));
+
+  container.append(textNode);
 }
 
 function mountElement(vnode: any, container: any) {

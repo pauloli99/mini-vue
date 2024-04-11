@@ -1,4 +1,4 @@
-import { h } from "../../lib/guide-mini-vue.esm.js";
+import { createTextVNode, h } from "../../lib/guide-mini-vue.esm.js";
 import { Foo } from "./Foo.js";
 
 window.self = null;
@@ -12,7 +12,7 @@ export const App = {
       {},
       {
         header: h("p", {}, "header"),
-        footer: h("p", {}, "footer"),
+        footer: [h("p", {}, "footer"), createTextVNode("hello string node")],
       }
       // [h("p", {}, "header"),h("p", {}, "header")]
     );

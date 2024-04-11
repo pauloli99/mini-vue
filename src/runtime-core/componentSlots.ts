@@ -13,8 +13,6 @@ const normalizeSlotValue = (value) => {
 };
 function normalizeObjectSlots(children: any, slots: any) {
   for (const key in children) {
-    console.log(`output->key`, key);
-
     const value = children[key];
 
     slots[key] = normalizeSlotValue(value);
