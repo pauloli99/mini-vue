@@ -38,8 +38,6 @@ const Consumer = {
     // const baz = inject("baz", "bazDefault");
     const baz = inject("baz", () => "bazDefault");
 
-    console.log(`output->foo,bar,baz`, foo, bar, baz);
-
     return {
       foo,
       bar,
