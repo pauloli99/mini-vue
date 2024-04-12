@@ -14,8 +14,8 @@ function patchProp(el, key, val) {
   }
 }
 
-function insert(el, container) {
-  container.append(el);
+function insert(el, parent) {
+  parent.append(el);
 }
 
 const renderer: any = createRenderer({
@@ -24,8 +24,8 @@ const renderer: any = createRenderer({
   insert,
 });
 
-export const createApp = (...args) => {
+export function createApp(...args) {
   return renderer.createApp(...args);
-};
+}
 
 export * from "../runtime-core";

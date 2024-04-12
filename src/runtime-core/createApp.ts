@@ -1,6 +1,6 @@
 import { createVNode } from "./vnode";
 
-export const createAppApi = (render) => {
+export function createAppAPI(render) {
   return function createApp(rootComponent) {
     return {
       mount(rootContainer) {
@@ -10,4 +10,4 @@ export const createAppApi = (render) => {
       },
     };
   };
-};
+}

@@ -1,39 +1,33 @@
 import { getCurrentInstance } from "./component";
 
-// 存储 provide 的数据
-export const provide = (key, value) => {
-  const instance: any = getCurrentInstance();
+export function provide(key, value) {
+  const currentInstance: any = getCurrentInstance();
 
-  if (instance) {
-    let { provides } = instance;
-    const parentProvides = instance.parent ? instance.parent.provides : {};
+  if (currentInstance) {
+    let { provides } = currentInstance;
+    const parentProvides = currentInstance.parent.provides;
 
-    // init
     if (provides === parentProvides) {
-      provides = instance.provides = Object.create(parentProvides);
+      provides = currentInstance.provides = Object.create(parentProvides);
     }
 
     provides[key] = value;
   }
-};
+}
 
-// 获取 provide 的数据
-export const inject = (key, defaultValue) => {
-  const instance: any = getCurrentInstance();
+export function inject(key, defaultValue) {
+  const currentInstance: any = getCurrentInstance();
 
-  if (instance) {
-    const { parent } = instance;
-
-    const parentProvides = parent.provides;
+  if (currentInstance) {
+    const parentProvides = currentInstance.parent.provides;
 
     if (key in parentProvides) {
       return parentProvides[key];
-    } else if (defaultValue) {
-      if (typeof defaultValue === "function") {
-        return defaultValue();
+    }else if(defaultValue){
+      if(typeof defaultValue === "function"){
+        return defaultValue()
       }
-
-      return defaultValue;
+      return defaultValue
     }
   }
-};
+}
