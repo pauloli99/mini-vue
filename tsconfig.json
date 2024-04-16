@@ -10,7 +10,7 @@
     "preserveConstEnums": false,
     "sourceMap": true,
     "downlevelIteration": true,
-    "lib": ["es6", "DOM"],
+    "lib": ["es2016", "DOM"],
     "outDir": "./lib"
   },
   "include": ["src/**/*"],
