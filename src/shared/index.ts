@@ -10,6 +10,8 @@ export const hasChanged = (val, newValue) => {
   return !Object.is(val, newValue);
 };
 
+export const isString = (value) => typeof value === "string";
+
 export const hasOwn = (val, key) =>
   Object.prototype.hasOwnProperty.call(val, key);
 
