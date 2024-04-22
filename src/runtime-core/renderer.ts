@@ -168,19 +168,16 @@ export function createRenderer(options) {
       }
     } else {
       // 中间对比
-      const s1 = i;
-      const s2 = i;
+      let s1 = i;
+      let s2 = i;
 
       const toBePatched = e2 - s2 + 1;
       let patched = 0;
       const keyToNewIndexMap = new Map();
-
       const newIndexToOldIndexMap = new Array(toBePatched);
       let moved = false;
       let maxNewIndexSoFar = 0;
-      for (let i = 0; i < toBePatched; i++) {
-        newIndexToOldIndexMap[i] = 0;
-      }
+      for (let i = 0; i < toBePatched; i++) newIndexToOldIndexMap[i] = 0;
 
       for (let i = s2; i <= e2; i++) {
         const nextChild = c2[i];
@@ -202,6 +199,7 @@ export function createRenderer(options) {
           for (let j = s2; j <= e2; j++) {
             if (isSomeVNodeType(prevChild, c2[j])) {
               newIndex = j;
+
               break;
             }
           }
@@ -217,7 +215,6 @@ export function createRenderer(options) {
           }
 
           newIndexToOldIndexMap[newIndex - s2] = i + 1;
-
           patch(prevChild, c2[newIndex], container, parentComponent, null);
           patched++;
         }
@@ -226,11 +223,10 @@ export function createRenderer(options) {
       const increasingNewIndexSequence = moved
         ? getSequence(newIndexToOldIndexMap)
         : [];
-
       let j = increasingNewIndexSequence.length - 1;
 
       for (let i = toBePatched - 1; i >= 0; i--) {
-        const nextIndex = s2 + i;
+        const nextIndex = i + s2;
         const nextChild = c2[nextIndex];
         const anchor = nextIndex + 1 < l2 ? c2[nextIndex + 1].el : null;
 
@@ -318,7 +314,6 @@ export function createRenderer(options) {
 
   function updateComponent(n1, n2) {
     const instance = (n2.component = n1.component);
-
     if (shouldUpdateComponent(n1, n2)) {
       instance.next = n2;
       instance.update();
@@ -349,7 +344,10 @@ export function createRenderer(options) {
         if (!instance.isMounted) {
           console.log("init");
           const { proxy } = instance;
-          const subTree = (instance.subTree = instance.render.call(proxy));
+          const subTree = (instance.subTree = instance.render.call(
+            proxy,
+            proxy
+          ));
 
           patch(null, subTree, container, instance, anchor);
 
@@ -359,7 +357,6 @@ export function createRenderer(options) {
         } else {
           console.log("update");
           const { next, vnode } = instance;
-
           if (next) {
             next.el = vnode.el;
 
@@ -367,7 +364,7 @@ export function createRenderer(options) {
           }
 
           const { proxy } = instance;
-          const subTree = instance.render.call(proxy);
+          const subTree = instance.render.call(proxy, proxy);
           const prevSubTree = instance.subTree;
           instance.subTree = subTree;
 
